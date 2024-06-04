@@ -1200,6 +1200,8 @@ PiCpuSmmEntry (
   //
   mCpuHotPlugData.ApicId = (UINT64 *)AllocatePool (sizeof (UINT64) * mMaxNumberOfCpus);
   ASSERT (mCpuHotPlugData.ApicId != NULL);
+  mCpuHotPlugData.SmBase = (UINTN *)AllocatePool (sizeof (UINTN) * mMaxNumberOfCpus);
+  ASSERT (mCpuHotPlugData.SmBase != NULL);
   mCpuHotPlugData.ArrayLength = (UINT32)mMaxNumberOfCpus;
 
   //
