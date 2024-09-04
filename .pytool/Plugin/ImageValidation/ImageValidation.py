@@ -266,6 +266,14 @@ class ImageValidation(IUefiBuildPlugin):
             @ignorelist: List[str] or None.  optional - default is None: a list of case insensitive filenames to ignore
             @returns a List of file paths to matching files
         '''
+        print("extensionlist")
+        print(extensionlist)
+        print("directory")
+        print(directory)
+        print("ignorelist")
+        print(ignorelist)
+        print("List")
+        print(List)
         if not isinstance(extensionlist, list):
             logging.critical("Expected list but got " +
                              str(type(extensionlist)))
