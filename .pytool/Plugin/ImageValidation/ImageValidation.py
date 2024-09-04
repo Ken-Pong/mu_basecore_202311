@@ -154,14 +154,28 @@ class ImageValidation(IUefiBuildPlugin):
         fdf_parser.SetInputVars(env_vars).ParseFile(ActiveFdf)
 
         # Test all pre-compiled efis described in the fdf
+        print("Test all pre-compiled efis described in the fdf")
         result = Result.PASS
         for FV_name in fdf_parser.FVs:  # Get all Firmware volumes
             FV_files = fdf_parser.FVs[FV_name]["Files"]
+            print("FV_name")
+            print(FV_name)
+            print("FV_files")
+            print(FV_files)
             for fv_file_name in FV_files:  # Iterate over each file in the firmware volume
                 fv_file = FV_files[fv_file_name]
+                print("fv_file_name")
+                print(fv_file_name)
+                print("fv_file")
+                print(fv_file)
                 if "PE32" in fv_file:  # Any PE32 section in the FV contains a path to the efi
+                    print("PE32 in fv_file")
                     # could have multiple PE32 sections
                     for efi_path in fv_file["PE32"]:
+                        print("efi_path")
+                        print(efi_path)
+                        print("EFI name")
+                        print(os.path.basename(efi_path))
                         efi_path = self._resolve_vars(thebuilder, efi_path)
                         efi_path = edk2.GetAbsolutePathOnThisSystemFromEdk2RelativePath(
                             efi_path)
@@ -180,19 +194,29 @@ class ImageValidation(IUefiBuildPlugin):
         # End Pre-Compiled Image Verification
 
         # Start Build Time Compiled Image Verification
+        print("Start Build Time Compiled Image Verification")
         result = Result.PASS
         for arch in thebuilder.env.GetValue("TARGET_ARCH").split():
+            print("arch")
+            print(arch)
             efi_path_list = self._walk_directory_for_extension(
                 ['.efi'], f'{thebuilder.env.GetValue("BUILD_OUTPUT_BASE")}/{arch}')
+            print("efi_path_list")
+            print(efi_path_list)
 
             for efi_path in efi_path_list:
+                print("efi_path")
+                print(efi_path)
                 if os.path.basename(efi_path) in self.ignore_list:
+                    print("Find in ignore list, skip this efi file")
                     continue
 
                 # Perform Image Verification on any output efi's
                 # Grab profile from makefile
                 if "OUTPUT" in efi_path:
                     efi_inf = Path(efi_path).with_suffix('.inf')
+                    print("efi_inf")
+                    print(efi_inf)
                     if not efi_inf.is_file():
                         logging.warning(
                             f"Cannot find {os.path.basename(efi_inf)} for {os.path.basename(efi_path)}, Skipping...")
