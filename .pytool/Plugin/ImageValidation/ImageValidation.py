@@ -155,27 +155,41 @@ class ImageValidation(IUefiBuildPlugin):
 
         # Test all pre-compiled efis described in the fdf
         print("Test all pre-compiled efis described in the fdf")
+        logging.debug(f'Test all pre-compiled efis described in the fdf')
         result = Result.PASS
         for FV_name in fdf_parser.FVs:  # Get all Firmware volumes
             FV_files = fdf_parser.FVs[FV_name]["Files"]
             print("FV_name")
+            logging.debug(f'FV_name')
             print(FV_name)
+            logging.debug(f'{FV_name}')
             print("FV_files")
+            logging.debug(f'FV_files')
             print(FV_files)
+            logging.debug(f'{FV_files}')
             for fv_file_name in FV_files:  # Iterate over each file in the firmware volume
                 fv_file = FV_files[fv_file_name]
                 print("fv_file_name")
+                logging.debug(f'fv_file_name')
                 print(fv_file_name)
+                logging.debug(f'{fv_file_name}')
                 print("fv_file")
+                logging.debug(f'fv_file')
                 print(fv_file)
+                logging.debug(f'{fv_file}')
                 if "PE32" in fv_file:  # Any PE32 section in the FV contains a path to the efi
                     print("PE32 in fv_file")
+                    logging.debug(f'PE32 in fv_file')
                     # could have multiple PE32 sections
                     for efi_path in fv_file["PE32"]:
                         print("efi_path")
+                        logging.debug(f'efi_path')
                         print(efi_path)
+                        logging.debug(f'{efi_path}')
                         print("EFI name")
+                        logging.debug(f'name')
                         print(os.path.basename(efi_path))
+                        logging.debug(f'{os.path.basename(efi_path)}')
                         efi_path = self._resolve_vars(thebuilder, efi_path)
                         efi_path = edk2.GetAbsolutePathOnThisSystemFromEdk2RelativePath(
                             efi_path)
@@ -195,18 +209,25 @@ class ImageValidation(IUefiBuildPlugin):
 
         # Start Build Time Compiled Image Verification
         print("Start Build Time Compiled Image Verification")
+        logging.debug(f'Start Build Time Compiled Image Verification')
         result = Result.PASS
         for arch in thebuilder.env.GetValue("TARGET_ARCH").split():
             print("arch")
+            logging.debug(f'arch')
             print(arch)
+            logging.debug(f'{arch}')
             efi_path_list = self._walk_directory_for_extension(
                 ['.efi'], f'{thebuilder.env.GetValue("BUILD_OUTPUT_BASE")}/{arch}')
             print("efi_path_list")
+            logging.debug(f'efi_path_list')
             print(efi_path_list)
+            logging.debug(f'{efi_path_list}')
 
             for efi_path in efi_path_list:
                 print("efi_path")
+                logging.debug(f'efi_path')
                 print(efi_path)
+                logging.debug(f'{efi_path}')
                 if os.path.basename(efi_path) in self.ignore_list:
                     print("Find in ignore list, skip this efi file")
                     continue
@@ -216,7 +237,9 @@ class ImageValidation(IUefiBuildPlugin):
                 if "OUTPUT" in efi_path:
                     efi_inf = Path(efi_path).with_suffix('.inf')
                     print("efi_inf")
+                    logging.debug(f'efi_inf')
                     print(efi_inf)
+                    logging.debug(f'{efi_inf}')
                     if not efi_inf.is_file():
                         logging.warning(
                             f"Cannot find {os.path.basename(efi_inf)} for {os.path.basename(efi_path)}, Skipping...")
@@ -291,13 +314,51 @@ class ImageValidation(IUefiBuildPlugin):
             @returns a List of file paths to matching files
         '''
         print("extensionlist")
+        logging.debug(f'extensionlist')
         print(extensionlist)
+        logging.debug(f'{extensionlist}')
         print("directory")
+        logging.debug(f'directory')
         print(directory)
+        logging.debug(f'{directory}')
         print("ignorelist")
+        logging.debug(f'ignorelist')
         print(ignorelist)
+        logging.debug(f'{ignorelist}')
         print("List")
+        logging.debug(f'List')
         print(List)
+        logging.debug(f'{List}')
+
+        extlist_lower = list()
+        for itemtest in extensionlist:
+            extlist_lower.append(itemtest.lower())
+
+        print("Walking througth directory")
+        logging.debug(f'Walking througth directory')
+        print(os.walk(directory))
+        logging.debug(f'{os.walk(directory)}')
+
+        for Rt, Directs, Fs in os.walk(directory):
+            print("Root  Dirs  Files")
+            print(Rt)
+            print(Directs)
+            print(Fs)
+            logging.debug(f'Root  Dirs  Files')
+            logging.debug(f'{Rt}')
+            logging.debug(f'{Directs}')
+            logging.debug(f'{Fs}')
+            for fls in Fs:
+                print("File in Files")
+                print(fls)
+                logging.debug(f'File in Files')
+                logging.debug(f'{fls}')
+                for Extns in extlist_lower:
+                    print("Extension in extensionlist_lower")
+                    print(Extns)
+                    logging.debug(f'Extension in extensionlist_lower')
+                    logging.debug(f'{Extns}')
+
         if not isinstance(extensionlist, list):
             logging.critical("Expected list but got " +
                              str(type(extensionlist)))
